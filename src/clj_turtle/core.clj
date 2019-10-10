@@ -56,38 +56,23 @@
 
 (defn a
   "Specify the rdf:type of an entity being described"
-  []  
+  []
   (str " <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "))
 
 (defn literal
-  "[v] String that represents the literal value to create.
-   [lang] (optional) Keyword referring to the ISO 639-1 language code
-   [type] (optional) Namespace function or string that refers to a
-                     datatype to specify for the literal value
 
-   Usages:
-     ; specify a simple literal
-     (literal \"bob\")
-
-     ; specify the language of the literal
-     (literal \"bob\" :lang :en)
-  
-     ; if the namespace 'xsd' has been defined
-     (literal \"bob\" :type (xsd :string))
-
-     ; if you want to use an abreviated URI you can do this that way
-     (literal \"bob\" :type \"xsd:string\")"
-  [v & {:keys [lang type]
-        :or [lang nil
-             type nil]}]
-  (apply str
-         (str "\"\"\"" (if (keyword? v)
-                         (escape (name v))
-                         (escape v))"\"\"\"")
-         (if lang
-           (str "@" (name lang))
-           (when type
-             (str "^^" (name type))))))
+  [v & options]
+  (let [{:keys [lang type]
+         :or {lang nil
+              type nil}} (apply hash-map options)]
+    (apply str
+           (str "\"\"\"" (if (keyword? v)
+                           (escape (name v))
+                           (escape v))"\"\"\"")
+           (if lang
+             (str "@" (name lang))
+             (when type
+               (str "^^" (name type)))))))
 
 (defn rei
   "Reify a clj-turtle triple"
